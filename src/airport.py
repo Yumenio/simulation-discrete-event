@@ -5,7 +5,6 @@ from va import uni,exp,norm
 class Airport:
   def __init__(self, total_time = 60*24*7, landing_tracks = 5):
     self.tracks = [math.inf for i in range(landing_tracks)]
-    self.tracks_history = [[] for track in self.tracks] # save tuple (landing,departure)
     self.plane_history = [] # keeping record of all planes processed
 
     # waiting queue for landing
@@ -48,7 +47,6 @@ class Airport:
     ellapsed_time = self.handle_plane(plane, track_id) # sim all possible proccess that a plane can go through
     plane.departure_time = self.current_time + ellapsed_time
     self.tracks[track_id] = plane.departure_time
-    self.tracks_history[track_id].append( ( plane.landing_time, plane.departure_time ) )
 
   def handle_plane(self, plane, track_id):
     acc = 0
@@ -89,8 +87,8 @@ class Airport:
 
     # print results
     ans = [0 for i in range(5)]
+    for plane in self.plane_history:
+      ans[plane.track] += plane.departure_time - plane.landing_time
+    
     for i in range(5):
-      for record in self.tracks_history[i]:
-        # print(f"Track {i}: Plane arrived at {record[0]} and departed at {record[1]}")
-        ans[i] += min(record[1],self.total_time) - record[0]
-      print(f"Track {i} was idle for {self.total_time - ans[i]} minutes")
+      print(f"Track {i} was idle for {self.total_time - ans[i]} minutes.")
