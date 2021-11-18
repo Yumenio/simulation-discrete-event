@@ -38,4 +38,5 @@ class Airport:
     
   def on_landing(self, plane,track_id):
     plane.track = track_id
+    x = 0
     self.tracks_history.append( self.next_arrival_time, (self.tracks[track_id]) )
