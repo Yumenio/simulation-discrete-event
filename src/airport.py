@@ -6,22 +6,26 @@ class Airport:
   def __init__(self, total_time = 60*24*7, landing_tracks = 5):
     self.tracks = [math.inf for i in range(landing_tracks)]
     self.tracks_history = [[] for track in self.tracks] # save tuple (landing,departure)
-    self.plane_history = [] # keeping record of all planes that departed
+    self.plane_history = [] # keeping record of all planes processed
 
     # waiting queue for landing
     self.queue = []
+
+    # dicts
+    self.A = {}
+    self.D = {}
 
     self.current_time = 0
     self.next_arrival_time = exp(0.05) # time of the first arrival
     self.total_time = total_time
 
   def idle_tracks(self):
-    candidates = [i for i in self.tracks if i == math.inf]
+    candidates = [s for s,i in enumerate(self.tracks) if i == math.inf]
     if not candidates:
       return -1
 
     index = int(uni(0,len(candidates))) # randomize output if possible
-    return index
+    return candidates[index]
 
   def on_arrival(self):
     new_plane = Plane()
@@ -44,7 +48,7 @@ class Airport:
     ellapsed_time = self.handle_plane(plane, track_id) # sim all possible proccess that a plane can go through
     plane.departure_time = self.current_time + ellapsed_time
     self.tracks[track_id] = plane.departure_time
-    self.tracks_history.append( ( plane.landing_time, plane.departure_time ) )
+    self.tracks_history[track_id].append( ( plane.landing_time, plane.departure_time ) )
 
   def handle_plane(self, plane, track_id):
     acc = 0
@@ -87,6 +91,6 @@ class Airport:
     ans = [0 for i in range(5)]
     for i in range(5):
       for record in self.tracks_history[i]:
-        print(f"Track {i}: Plane arrived at {record[0]} and departed at {record[1]}")
-        ans[i] += record[1] - record[0]
+        # print(f"Track {i}: Plane arrived at {record[0]} and departed at {record[1]}")
+        ans[i] += min(record[1],self.total_time) - record[0]
       print(f"Track {i} was idle for {self.total_time - ans[i]} minutes")
