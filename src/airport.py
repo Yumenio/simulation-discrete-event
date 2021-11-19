@@ -58,6 +58,8 @@ class Airport:
     acc += exp(1/15) if uni(0,1) < 0.1 else 0 # plane needs repair with a 1/10 prob
     acc += norm(10,5) # depart
 
+    # consider adding more props to the plane with detailed time spent in each proccess, but for now this will do
+
     return acc
 
   def on_depart(self):
