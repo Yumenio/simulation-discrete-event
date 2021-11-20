@@ -19,11 +19,11 @@ En el Aeropuerto de Barajas, se desea conocer cuánto tiempo se encuentran vacı
 
 Primeramente, el objetivo de la simulación es determinar cuanto tiempo pasa una pista del aeropuerto desocupada.
 
-Consideraremos que una pista está ocupada desde que un avión aterriza por ella, y hasta que despega. El tiempo intermedio entre el aterrizaje y el despegue, en el cual el avión se encuentra ocupado con otros procesos, se considerará que la pista se encuentra ocupada igualmente.
+Consideraremos que una pista está ocupada desde que un avión aterriza por ella, y hasta que despega. El tiempo intermedio entre el aterrizaje y el despegue, en el cual el avión se encuentra realizando otros procesos, se considerará que la pista se encuentra ocupada igualmente.
 
 Siguiendo esta idea, se puede determinar el tiempo que una pista pasa ocupada restándole al tiempo total que estuvo en funcionamiento, la suma de los tiempos en los que hubo un avión en ella. Para ello, tenemos un objeto *Plane*, el cual guarda el número de la pista que lo atendió, así como su tiempo exacto de comienzo de aterrizaje y final del despegue. Sean estos datos $P_t, P_A,P_D$ respecticamente, entonces el tiempo que una pista pasa desocupada sería igual a: $T - \sum P_D-P_A ~~~~~~\forall ~\text{Plane tal que $P_T$ sea igual a la pista analizada.  T = Tiempo Total que el aeropuerto estuvo funcionando.}$. 
 
-Para generar las variables aleatorias requeridas, se utilizó el método de la transformada inversa para el caso de la exponencial, y el método de rechazos para la normal. Además se usó el método uniform(0,1) del módulo random como punto de partida.
+Para generar las variables aleatorias requeridas, se utilizó el método de la transformada inversa para el caso de la exponencial, y el método de rechazos para la normal. Además se usó el método uniform(0,1) del módulo random como punto de partida. Los códigos se encuentran en el archivo **va.py**.
 
 La llegada de cada avión al aeropuerto se asumió que era independiente del resto. Cuando un avión llega, se le asigna una pista de aterrizaje aleatoria, en caso de que hubiera alguna desocupada, en caso contrario se pone al final de la cola de aviones en espera. Para aleatorizar la pista que atenderá al próximo avión se utilizó una variable aleatoria uniforme, para elegir una de las que estuvieran libres en ese momento.
 
@@ -33,7 +33,7 @@ Dado que todos los arribos al aeropuerto son independientes y siguen una distrib
 
 
 
-Cuando un avión aterriza, anotamos la pista por la cual lo hizo, se calcula el tiempo que pasará ocupando la pista, ya sea cargando, descargando, recargando combustible o bajo reparaciones(los cuales se consideran de manera independiente dos a dos,i.e. si el avión está recargando combustible, no estará bajo reparaciones a la vez), y se anotan también sus tiempos de aterrizaje y despegue.
+Cuando un avión aterriza, anotamos la pista por la cual lo hizo, luego calculamos el tiempo que pasará ocupando la pista, ya sea cargando, descargando, recargando combustible o bajo reparaciones(los cuales se consideran de manera independiente dos a dos,i.e. si el avión está recargando combustible, no estará simultáneamente bajo reparaciones), y se anotan también sus tiempos de aterrizaje y despegue.
 
 
 
@@ -54,7 +54,7 @@ Se consideró que la probabilidad de que un avión cargue y/o descargue en el ae
   * **tracks**: lista para mantener los tiempos de despegue de los aviones que las ocupan
   * **plane_history**: lista en la que se guardan todos los aviones atendidos para luego analizar los datos
 
-Los eventos son dos solamente, *on_arrival* y *on_depart*, para cuando un avión llega y se va del aeropuerto respectivamente.
+Los eventos principales son *on_arrival* y *on_depart*, para cuando un avión llega y se va del aeropuerto respectivamente; así como *handle_plane* para simular el tratamiento que se le da al avión en el aeropuerto. *on_arrival* se encarga del proceso de llegada de un avión al aeropuerto, le asigna una pista de aterrizaje de ser posible, o lo añade al final de la cola de espera. Luego cuando un avión es designado para ser atendido en una pista, *handle_plane* simula todo su proceso de aterrizaje, carga/descarga, recarga de combustible y posibles reparaciones, para al final simular su despegue. Los datos de aterrizaje, pista de aterrizaje y despegue son anotados como propiedades de la clase *Plane* que representa cada avión en nuestro programa. Finalmente cuando el avión despega, se añade a la lista *plane_history* de aviones que han sido procesados durante la simulación, para, al llegar al tiempo límite, analizar los resultados obtenidos.
 
 
 
@@ -62,5 +62,5 @@ Los eventos son dos solamente, *on_arrival* y *on_depart*, para cuando un avión
 
 ### Consideraciones
 
-Luego de ejecutar la simulación unas 10 veces, se obtuvieron resultados bastante similares para cada uno. Dado que no existe ninguna preferencia ni requerimiento a la hora de asignarle una pista a un avión aterrizando, los valores de tiempo desocupado oscilaban entre 2500 y 3000 minutos. Obteniendo como mínimo 1800 minutos en una ocasión, y cerca de 4000 para el máximo.
+Luego de ejecutar la simulación unas 10 veces, se obtuvieron resultados bastante similares para cada una. Dado que no existe ninguna preferencia ni requerimiento a la hora de asignarle una pista a un avión aterrizando, los valores de tiempo desocupado oscilaban entre 2500 y 3000 minutos. Obteniendo como mínimo 1800 minutos en una ocasión, y cerca de 4000 para el máximo.
 
